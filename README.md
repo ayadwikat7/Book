@@ -11,3 +11,8 @@ This project is a library system with user authentication, book listing with det
 - Add books to cart and favorites.
 - Filtered book display.
 - Profile settings management.
+- 
+## Tools & Technologies
+- **Language:** Flutter (Dart)
+- **IDE:** Android Studio
+
