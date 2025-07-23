@@ -2,6 +2,7 @@ import 'package:books/features/Home/representations/widget/searchText.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../../Wishlist/represintation/ui/widgt/WishlistPage.dart';
 import '../../../splach1/Data/color.dart';
 
 class Appbarewithsearch extends StatelessWidget implements PreferredSizeWidget {
@@ -42,7 +43,16 @@ class Appbarewithsearch extends StatelessWidget implements PreferredSizeWidget {
                   border: Border.all(color: Appcolor.Pink),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.favorite_border, color: Appcolor.Pink, size: 22),
+                child: IconButton(
+                  icon: const Icon(Icons.favorite_border, color: Colors.pink),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const WishlistPage()),
+                    );
+                  },
+                ),
+
               ),
             ],
           ),

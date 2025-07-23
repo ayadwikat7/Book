@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../Wishlist/data/wishlist_data.dart';
 import '../../../splach1/Data/color.dart';
 import 'ActionButton.dart';
 
@@ -124,12 +125,19 @@ class _RecommendedBookItemState extends State<RecommendedBookItem> {
                         ActionButton(
                           isActive: isFavorite,
                           icon: isFavorite ? Icons.favorite : Icons.favorite_border,
+                          activeColor: Colors.pink,     // لون الأيقونة عند التفعيل
+                          inactiveColor: Colors.pink,   // لون الأيقونة عند الإلغاء
+                          backgroundColor: Colors.white, // خلفية الزر
+                          size: 36,                      // حجم الزر
                           onTap: () {
                             setState(() {
                               isFavorite = !isFavorite;
                             });
+                            // إضافة أو إزالة من المفضلة
                           },
                         ),
+
+
                       ],
                     ),
                   ],

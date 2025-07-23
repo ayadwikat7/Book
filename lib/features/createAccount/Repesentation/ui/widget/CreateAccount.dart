@@ -145,7 +145,6 @@ class _CreateaccountState extends State<Createaccount> {
                     });
 
                     if (isValid && agree) {
-                      // مثل زر Login في صفحة تسجيل الدخول
                       NavigationHelper.push(context: context, destination: const Booksh());
                     }
                   },

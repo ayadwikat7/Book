@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../splach1/Data/color.dart';
+import 'favorite_button.dart';
 
 class BookCard extends StatelessWidget {
   final String image;
@@ -48,26 +49,18 @@ class BookCard extends StatelessWidget {
                 Positioned(
                   top: 8,
                   left: 10,
-                  child: Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.favorite_border,
-                      color: Colors.pink,
-                      size: 20,
-                    ),
+                  child: FavoriteButton(
+                    image: image,
+                    title: title,
+                    author: author,
+                    price: price,
+                    activeColor: Colors.pink,       // لون الأيقونة عندما تكون مضافة
+                    inactiveColor: Colors.black,    // لون الأيقونة الافتراضي
+                    backgroundColor: Colors.white,  // خلفية الزر
                   ),
                 ),
+
+
               ],
             ),
             const SizedBox(height: 4),

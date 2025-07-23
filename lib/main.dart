@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'features/Book/represintations/widget/BookDetails.dart';
 import 'features/Home/representations/widget/BooksH.dart';
 import 'features/createAccount/Repesentation/ui/widget/CreateAccount.dart';
 import 'features/Login/represintation/ui/widgets/LoginScreen.dart';
@@ -21,7 +22,7 @@ class Book extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home:spalshBook(),
+      home: Booksh(),
     );
   }
 }

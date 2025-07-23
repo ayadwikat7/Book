@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../splach1/Data/color.dart'; 
+import '../../../splach1/Data/color.dart';
 
 class BuildFilterButton extends StatelessWidget {
   final IconData icon;

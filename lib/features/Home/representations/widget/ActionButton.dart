@@ -6,11 +6,21 @@ class ActionButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
 
+  // ألوان قابلة للتخصيص
+  final Color activeColor;
+  final Color inactiveColor;
+  final Color backgroundColor;
+  final double size;
+
   const ActionButton({
     super.key,
     required this.isActive,
     required this.icon,
     required this.onTap,
+    this.activeColor = Colors.pink,      // اللون عند التفعيل
+    this.inactiveColor = Colors.pink,    // اللون عند عدم التفعيل
+    this.backgroundColor = Colors.white, // لون الخلفية
+    this.size = 36,                      // حجم المربع
   });
 
   @override
@@ -18,17 +28,20 @@ class ActionButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 36,
-        height: 36,
+        width: size,
+        height: size,
         decoration: BoxDecoration(
-          color: isActive ? Appcolor.Pink : Colors.white,
-          borderRadius: BorderRadius.circular(8), // ممكن تخليها 18 لو بدك شكل دائري أكثر
-          border: Border.all(color: Appcolor.Pink),
+          color: isActive ? activeColor : backgroundColor,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: activeColor,
+            width: 1.5,
+          ),
         ),
         child: Icon(
           icon,
-          size: 18,
-          color: isActive ? Colors.white : Appcolor.Pink,
+          size: size * 0.5,
+          color: isActive ? Colors.white : inactiveColor,
         ),
       ),
     );

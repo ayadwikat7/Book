@@ -11,6 +11,11 @@ class Appcolor{
   static const Color CheckColor=Color(0xFF34A853);
   static const Color BackGround=Color(0xFFF5F5F5);
   static const Color BorderSearch=Color(0x80222222);
+  static const Color FlashSaleColor=Color(0xFF3B2F4A);
+  static const Color StarsColor=Color(0xFFEBC305);
+  static const Color white3= Color(0x4DFFFFFF);
+  static const Color FreeShip=Color(0x80222222);
+  static const Color Discount=Color(0xFFEAA451);
 
 
 
