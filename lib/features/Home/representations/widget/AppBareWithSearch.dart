@@ -19,7 +19,7 @@ class Appbarewithsearch extends StatelessWidget implements PreferredSizeWidget {
             children: [
 
               Expanded(
-                child: Searchtext()
+                child: Searchtext(onSearch: (String value) {  },)
               ),
 
               SizedBox(width: 12),

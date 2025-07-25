@@ -1,14 +1,10 @@
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import '../../../../main.dart';
-import '../../../Book/represintations/widget/Bookdetails.dart';
-import '../../../Book/represintations/widget/Books.dart';
+import '../../../Book/represintations/widget/BookDetails.dart';
 import '../../../FlashSaleBook/Data/onItemTapped.dart';
-import '../../../MyCartPage/reprecentations/widget/MyCartPage.dart';
-import '../../../Profile/data/reprecintations/widget/ProfilePage.dart';
+import '../../../createAccount/Repesentation/ui/widget/PinkLoadingIndicator.dart';
 import '../../../splach1/Data/color.dart';
 import '../../../splach1/repesentation/ui/widgets/Helper.dart';
-import '../../Data/book_data.dart';
+import '../../Data/book_service.dart';
 import 'AppBareWithSearch.dart';
 import 'CustomBottomNavBar.dart';
 import 'FlashSaleSection.dart';
@@ -26,6 +22,36 @@ int selectedIndex = 0;
 
 class _BookshState extends State<Booksh> {
   final ScrollController _scrollController = ScrollController();
+  final BookService _bookService = BookService();
+
+  List<Map<String, dynamic>> bestSellerBooks = [];
+  List<Map<String, dynamic>> recommendedBooks = [];
+  List<Map<String, dynamic>> flashSaleBooks = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchBooks();
+  }
+
+  Future<void> _fetchBooks() async {
+    try {
+      final bestSellers = await _bookService.getBestSellerBooks();
+      final recommended = await _bookService.getRecommendedBooks();
+      final flashSales = await _bookService.getFlashSaleBooks();
+
+      setState(() {
+        bestSellerBooks = bestSellers;
+        recommendedBooks = recommended;
+        flashSaleBooks = flashSales;
+        isLoading = false;
+      });
+    } catch (e) {
+      print("Error fetching books: $e");
+      setState(() => isLoading = false);
+    }
+  }
 
   void _scrollLeft() {
     _scrollController.animateTo(
@@ -51,10 +77,19 @@ class _BookshState extends State<Booksh> {
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: PinkLoadingIndicator(),
+        ),
+      );
+    }
+
     final recommendedList = recommendedBooks.take(3).toList();
 
     return Scaffold(
-      extendBody: true, // لون خلفية الشاشة
+
+      extendBody: true,
       appBar: Appbarewithsearch(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(bottom: 90),
@@ -74,11 +109,11 @@ class _BookshState extends State<Booksh> {
                 scrollDirection: Axis.horizontal,
                 controller: _scrollController,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: recommendedBooks.length,
+                itemCount: bestSellerBooks.length,
                 separatorBuilder: (_, __) => const SizedBox(width: 12),
                 itemBuilder: (context, index) {
-                  final book = recommendedBooks[index];
-                  return _bookCover(book); // نمرر كائن الكتاب
+                  final book = bestSellerBooks[index];
+                  return _bookCover(book);
                 },
               ),
             ),
@@ -92,9 +127,10 @@ class _BookshState extends State<Booksh> {
               ],
             ),
             const SizedBox(height: 24),
-            RecommendedSection(books: recommendedList),
+            RecommendedSection(books: recommendedList.take(4).toList()),
             const SizedBox(height: 24),
-            FlashSaleSection(books: recommendedList),
+            FlashSaleSection(books: flashSaleBooks.take(4).toList()),
+
           ],
         ),
       ),
@@ -121,13 +157,13 @@ class _BookshState extends State<Booksh> {
       onTap: () {
         NavigationHelper.push(
           context: context,
-          destination: Bookdetails(book: book), // فتح صفحة التفاصيل
+          destination: BookDetailsPage(bookId: book['id'] ?? 0), // التأكد من id
         );
       },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
         child: Image.network(
-          book['image'],
+          book['image'] ?? '',
           width: 110,
           height: 160,
           fit: BoxFit.cover,
@@ -143,4 +179,5 @@ class _BookshState extends State<Booksh> {
       ),
     );
   }
+
 }

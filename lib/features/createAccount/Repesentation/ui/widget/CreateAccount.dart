@@ -4,8 +4,10 @@ import '../../../../splach1/Data/color.dart';
 import '../../../../splach1/repesentation/ui/widgets/Helper.dart';
 import '../../../../Login/represintation/ui/widgets/LoginScreen.dart';
 import '../../../../Login/represintation/ui/widgets/TextFildeLogin.dart';
+import '../../../Data/RegisterService.dart';
 import 'CreateOrLogin.dart';
 import '../../../../Login/represintation/ui/widgets/titleAppBar.dart';
+import 'PinkLoadingIndicator.dart';
 
 class Createaccount extends StatefulWidget {
   const Createaccount({super.key});
@@ -22,8 +24,70 @@ class _CreateaccountState extends State<Createaccount> {
   final confirmPasswordController = TextEditingController();
 
   bool agree = false;
-  bool showAgreementError = false;
   bool triedToSubmit = false;
+  bool isLoading = false;
+
+  Future<void> _register() async {
+    setState(() => isLoading = true);
+    final authService = AuthService();
+
+    try {
+      final result = await authService.registerUser(
+        name: nameController.text.trim(),
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+        confirmPassword: confirmPasswordController.text.trim(),
+      );
+
+      setState(() => isLoading = false);
+      final statusCode = result['statusCode'];
+      final data = result['data'];
+
+      if (statusCode == 201) {
+        // نجاح التسجيل
+        final message = data['message'] ?? "Registered successfully! Please verify your email.";
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+
+        // الانتقال إلى صفحة تسجيل الدخول
+        Future.delayed(const Duration(seconds: 2), () {
+          NavigationHelper.pushReplacement(
+            context: context,
+            destination: const Loginscreen(),
+          );
+        });
+      } else {
+        // عرض الأخطاء القادمة من السيرفر
+        String errorMsg = data['message'] ?? "Registration failed";
+        if (data['errors'] != null) {
+          data['errors'].forEach((key, value) {
+            errorMsg += "\n- ${value.join(', ')}";
+          });
+        }
+        _showErrorDialog("Error", errorMsg);
+      }
+    } catch (e) {
+      setState(() => isLoading = false);
+      _showErrorDialog("Connection Error", e.toString());
+    }
+  }
+
+  void _showErrorDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,10 +170,7 @@ class _CreateaccountState extends State<Createaccount> {
                     Checkbox(
                       value: agree,
                       onChanged: (value) {
-                        setState(() {
-                          agree = value!;
-                          showAgreementError = false;
-                        });
+                        setState(() => agree = value!);
                       },
                     ),
                     const Text("Agree With", style: TextStyle(fontSize: 12)),
@@ -130,7 +191,11 @@ class _CreateaccountState extends State<Createaccount> {
                     ),
                   ),
                 const SizedBox(height: 14),
-
+                if (isLoading)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 16),
+                    child: PinkLoadingIndicator(),
+                  ),
                 // Submit button
                 Createorlogin(
                   loginOrSignUp: 'Create account',
@@ -139,19 +204,17 @@ class _CreateaccountState extends State<Createaccount> {
                   loginOrSignUpWith: 'Or sign in with',
                   onPressed: () {
                     final isValid = _formKey.currentState!.validate();
-                    setState(() {
-                      triedToSubmit = true;
-                      showAgreementError = !agree;
-                    });
-
-                    if (isValid && agree) {
-                      NavigationHelper.push(context: context, destination: const Booksh());
+                    setState(() => triedToSubmit = true);
+                    if (isValid && agree && !isLoading) {
+                      _register();
                     }
                   },
                   onLabelPressed: () {
                     NavigationHelper.push(context: context, destination: const Loginscreen());
                   },
                 ),
+
+
               ],
             ),
           ),

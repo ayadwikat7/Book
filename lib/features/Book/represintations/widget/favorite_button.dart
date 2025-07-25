@@ -53,13 +53,13 @@ class _FavoriteButtonState extends State<FavoriteButton> {
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isFavorite ? widget.activeColor : widget.inactiveColor,
-            width: 2,
+            width: 1,
           ),
         ),
         child: Icon(
-          Icons.favorite,
+          Icons.favorite_border_outlined,
           color: isFavorite ? widget.activeColor : widget.inactiveColor,
-          size: 22,
+          size: 18,
         ),
       ),
     );

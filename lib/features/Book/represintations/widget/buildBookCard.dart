@@ -55,7 +55,7 @@ class BookCard extends StatelessWidget {
                     author: author,
                     price: price,
                     activeColor: Colors.pink,       // لون الأيقونة عندما تكون مضافة
-                    inactiveColor: Colors.black,    // لون الأيقونة الافتراضي
+                    inactiveColor: Appcolor.Black,    // لون الأيقونة الافتراضي
                     backgroundColor: Colors.white,  // خلفية الزر
                   ),
                 ),

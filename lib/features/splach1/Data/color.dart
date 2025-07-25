@@ -16,7 +16,8 @@ class Appcolor{
   static const Color white3= Color(0x4DFFFFFF);
   static const Color FreeShip=Color(0x80222222);
   static const Color Discount=Color(0xFFEAA451);
-
+  static const Color TapOrder=Color(0xFF222222);
+  static const Color TabBackGround=Color(0xFFEFEFEF);
 
 
 }

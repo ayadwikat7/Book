@@ -1,23 +1,16 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import '../../../FlashSaleBook/Data/onItemTapped.dart';
 import '../../../FlashSaleBook/represinatons/ui/widght/custom_pagination.dart';
-import '../../../Home/representations/widget/BooksH.dart';
 import '../../../Home/representations/widget/CustomBottomNavBar.dart';
+import '../../../createAccount/Repesentation/ui/widget/PinkLoadingIndicator.dart';
 import '../../../splach1/repesentation/ui/widgets/Helper.dart';
+import 'BookDetails.dart';
 import 'buildBookCard.dart';
 import 'buildFilterButton.dart';
 import '../../../Home/representations/widget/searchText.dart';
 import '../../../splach1/Data/color.dart';
-import '../../../Home/Data/book_data.dart';
 import '../../../MyCartPage/data/cart_controller.dart';
-import '../../../MyCartPage/reprecentations/widget/MyCartPage.dart';
-import '../../../Profile/data/reprecintations/widget/ProfilePage.dart';
-import '../../../Book/represintations/widget/Books.dart';
-import '../../../Book/represintations/widget/Bookdetails.dart';
-import '../../../../main.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import '../../../Home/Data/book_service.dart';
 
 class Books extends StatefulWidget {
   const Books({super.key});
@@ -31,16 +24,93 @@ class _BooksState extends State<Books> {
   int currentPage = 0;
   static const int itemsPerPage = 6;
 
-  final CartController cartController = CartController(); // نفس الكائن (Singleton)
+  final CartController cartController = CartController();
+  final BookService _bookService = BookService();
+
+  List<Map<String, dynamic>> allBooks = [];
+  List<Map<String, dynamic>> filteredBooks = [];
+
+  bool isLoading = true;
+  String currentSort = 'Default';
+  String searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchBooks();
+  }
+
+  Future<void> _fetchBooks() async {
+    try {
+      final data = await _bookService.getRecommendedBooks();
+      setState(() {
+        allBooks = data;
+        filteredBooks = List.from(allBooks);
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() => isLoading = false);
+      print("Error fetching books: $e");
+    }
+  }
+
+  // البحث
+  void _searchBooks(String query) {
+    setState(() {
+      searchQuery = query.toLowerCase();
+      filteredBooks = allBooks.where((book) {
+        final title = (book['title'] ?? '').toLowerCase();
+        final author = (book['author'] ?? '').toLowerCase();
+        return title.contains(searchQuery) || author.contains(searchQuery);
+      }).toList();
+      _applySort(); // إعادة الترتيب بعد البحث
+    });
+  }
+
+  // الترتيب
+  void _applySort() {
+    setState(() {
+      if (currentSort == 'PriceAsc') {
+        filteredBooks.sort((a, b) => (a['price'] as num).compareTo(b['price'] as num));
+      } else if (currentSort == 'PriceDesc') {
+        filteredBooks.sort((a, b) => (b['price'] as num).compareTo(a['price'] as num));
+      } else if (currentSort == 'Rating') {
+        filteredBooks.sort((a, b) => (b['rating'] as num).compareTo(a['rating'] as num));
+      }
+    });
+  }
+
+  void _sortBooks(String sortKey) {
+    setState(() {
+      currentSort = sortKey;
+      _applySort();
+    });
+  }
+
+  // الفلترة (حسب شروطك)
+  void _filterBooks() {
+    // يمكنك إضافة لوجيك للفلترة هنا
+    // حالياً فقط سأعيد ضبط القائمة على الأصلية
+    setState(() {
+      filteredBooks = List.from(allBooks);
+      _applySort();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(child: PinkLoadingIndicator()),
+      );
+    }
+
+    // حساب الكتب المعروضة بعد البحث والترتيب
     int startIndex = currentPage * itemsPerPage;
     int endIndex = startIndex + itemsPerPage;
-    endIndex = endIndex > recommendedBooks.length ? recommendedBooks.length : endIndex;
-    final currentBooks = recommendedBooks.sublist(startIndex, endIndex);
-
-    int totalPages = (recommendedBooks.length / itemsPerPage).ceil();
+    endIndex = endIndex > filteredBooks.length ? filteredBooks.length : endIndex;
+    final currentBooks = filteredBooks.sublist(startIndex, endIndex);
+    int totalPages = (filteredBooks.length / itemsPerPage).ceil();
 
     return Scaffold(
       extendBody: true,
@@ -69,20 +139,64 @@ class _BooksState extends State<Books> {
         child: ListView(
           children: [
             const SizedBox(height: 8),
-            const Searchtext(),
+            // مربع البحث
+            Searchtext(
+              onSearch: _searchBooks,
+            ),
             const SizedBox(height: 12),
+            // أزرار الفلترة والترتيب
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 BuildFilterButton(
                   icon: Icons.filter_list,
                   label: 'Filter',
-                  onTap: () {},
+                  onTap: _filterBooks,
                 ),
                 BuildFilterButton(
                   icon: Icons.sort,
                   label: 'Sort by',
-                  onTap: () {},
+                  onTap: () {
+                    // نافذة اختيار الترتيب
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ListTile(
+                              title: const Text('Price: Low to High'),
+                              onTap: () {
+                                _sortBooks('PriceAsc');
+                                Navigator.pop(context);
+                              },
+                            ),
+                            ListTile(
+                              title: const Text('Price: High to Low'),
+                              onTap: () {
+                                _sortBooks('PriceDesc');
+                                Navigator.pop(context);
+                              },
+                            ),
+                            ListTile(
+                              title: const Text('Top Rated'),
+                              onTap: () {
+                                _sortBooks('Rating');
+                                Navigator.pop(context);
+                              },
+                            ),
+                            ListTile(
+                              title: const Text('Default'),
+                              onTap: () {
+                                _sortBooks('Default');
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
                 ),
               ],
             ),
@@ -105,7 +219,7 @@ class _BooksState extends State<Books> {
                   onTap: () {
                     NavigationHelper.push(
                       context: context,
-                      destination: Bookdetails(book: book),
+                      destination: BookDetailsPage(bookId: book['id']),
                     );
                   },
                   child: Stack(
@@ -115,11 +229,10 @@ class _BooksState extends State<Books> {
                         image: book['image'],
                         title: book['title'],
                         author: book['author'],
-                        price: book['price'],
-                        rating: book['rating'],
+                        price: (book['price'] as num).toDouble(),
+                        rating: (book['rating'] as num).toDouble(),
                         reviews: book['reviews'],
                       ),
-
                     ],
                   ),
                 );

@@ -34,7 +34,7 @@ class BottomNavHandler {
         break;
       case 4:
         NavigationHelper.pushReplacement(
-            context: context, destination: Profilepage());
+            context: context, destination: ProfilePage());
         break;
     }
   }

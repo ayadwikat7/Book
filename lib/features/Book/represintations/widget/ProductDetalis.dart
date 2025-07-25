@@ -39,14 +39,14 @@ class ProductDetailsSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildDetailRow("Book Title", book['title']),
-          _buildDetailRow("Author", book['author']),
+          _buildDetailRow("Book Title", book['title'] ?? 'N/A'),
+          _buildDetailRow("Author", book['author'] ?? 'N/A'),
           _buildDetailRow("Publication Date", book['publicationDate'] ?? '1997'),
           _buildDetailRow("ASIN", book['asin'] ?? 'B09TWSRMCB'),
           _buildDetailRow("Language", book['language'] ?? 'English'),
           _buildDetailRow("Publisher", book['publisher'] ?? 'Printer'),
           _buildDetailRow("Pages", (book['pages'] ?? '336').toString()),
-          _buildDetailRow("Book Format", book['format'] ?? 'Hard Cover'),
+          _buildDetailRow("Book Format", book['book_format'] ?? 'Hard Cover'),
           _buildDetailRow("Best Seller Rank", "#${book['rank'] ?? 3}"),
         ],
       ),

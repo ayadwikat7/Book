@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BookImageSection extends StatefulWidget {
-  final List<String> images; // صور الكتاب (وجه + ظهر)
+  final List<String> images;
   final VoidCallback? onShare;
   final VoidCallback? onFavorite;
 
@@ -17,7 +17,7 @@ class BookImageSection extends StatefulWidget {
 }
 
 class _BookImageSectionState extends State<BookImageSection> {
-  int selectedIndex = 0; // الصورة الحالية
+  int selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,6 @@ class _BookImageSectionState extends State<BookImageSection> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // الصورة الرئيسية
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Image.network(
@@ -37,7 +36,6 @@ class _BookImageSectionState extends State<BookImageSection> {
             ),
           ),
           const SizedBox(width: 12),
-          // العمود الأيمن (أزرار + صور مصغرة)
           Expanded(
             child: Column(
               children: [
@@ -45,7 +43,6 @@ class _BookImageSectionState extends State<BookImageSection> {
                 const SizedBox(height: 8),
                 _circleIconButton(Icons.share, widget.onShare),
                 const SizedBox(height: 16),
-                // الصور المصغرة
                 Column(
                   children: List.generate(widget.images.length, (index) {
                     return GestureDetector(

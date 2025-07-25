@@ -20,13 +20,12 @@ class _BookDetailsSectionState extends State<BookDetailsSection> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Title and Rating
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                 child: Text(
-                  widget.book['title'],
+                  widget.book['title'] ?? '',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -38,26 +37,23 @@ class _BookDetailsSectionState extends State<BookDetailsSection> {
                   const Icon(Icons.star, color: Colors.amber, size: 18),
                   const SizedBox(width: 4),
                   Text(
-                    '${widget.book['rating']}',
+                    '${widget.book['rating'] ?? 0}',
                     style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
                   Text(
-                    ' (${widget.book['reviews']})',
+                    ' (${widget.book['reviews'] ?? 0})',
                     style: const TextStyle(color: Colors.grey, fontSize: 12),
                   ),
                 ],
               ),
             ],
           ),
-
           const SizedBox(height: 8),
-
-          // Description + Read more
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.book['description'] ?? '',
+                widget.book['description'] ?? 'No description available.',
                 maxLines: _isExpanded ? null : 3,
                 overflow: TextOverflow.fade,
                 style: const TextStyle(color: Colors.grey, fontSize: 14),
@@ -70,11 +66,6 @@ class _BookDetailsSectionState extends State<BookDetailsSection> {
                       _isExpanded = !_isExpanded;
                     });
                   },
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -93,10 +84,7 @@ class _BookDetailsSectionState extends State<BookDetailsSection> {
               ),
             ],
           ),
-
           const SizedBox(height: 8),
-
-          // Price and Stock
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -109,79 +97,7 @@ class _BookDetailsSectionState extends State<BookDetailsSection> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '\$${widget.book['oldPrice'] ?? ""}',
-                    style: const TextStyle(
-                      color: Colors.grey,
-                      decoration: TextDecoration.lineThrough,
-                    ),
-                  ),
                 ],
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Appcolor.white,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: Appcolor.BorderSearch,
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Icon(Icons.check_circle, color: Colors.green, size: 16),
-                    SizedBox(width: 6),
-                    Text(
-                      'In Stock',
-                      style: TextStyle(color: Colors.green, fontSize: 12),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 10),
-
-          // Discount and Shipping
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Appcolor.BorderSearch),
-                ),
-                child: const Text(
-                  'Discount code: Ne212',
-                  style: TextStyle(
-                    color: Appcolor.Discount,
-
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Appcolor.BorderSearch),
-                ),
-                child: const Row(
-                  children: [
-                    Icon(Icons.local_shipping, size: 14, color: Appcolor.FreeShip),
-                    SizedBox(width: 4),
-                    Text(
-                      'Free Shipping Today',
-                      style: TextStyle(fontSize: 12),
-                    ),
-                  ],
-                ),
               ),
             ],
           ),

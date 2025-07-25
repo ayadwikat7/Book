@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../Home/Data/book_data.dart';
 import '../../Data/customerReviewsData.dart'; // استورد البيانات
 
 class CustomerReviewsSection extends StatelessWidget {

@@ -18,7 +18,7 @@ class CustomBottomNavBar extends StatelessWidget {
         ClipPath(
           clipper: BottomNavClipper(),
           child: Container(
-            height: 78, // ارتفاع الشريط
+            height: 78,
             color: Colors.white,
             padding: const EdgeInsets.only(top: 14),
             child: Row(
@@ -26,7 +26,7 @@ class CustomBottomNavBar extends StatelessWidget {
               children: [
                 _buildNavItem(Icons.home, "Home", 0),
                 _buildNavItem(Icons.menu_book, "Books", 1),
-                const SizedBox(width: 60), // مكان الزر الوسط
+                const SizedBox(width: 60),
                 _buildNavItem(Icons.shopping_cart, "My Cart", 3),
                 _buildNavItem(Icons.person, "Profile", 4),
               ],
@@ -36,9 +36,9 @@ class CustomBottomNavBar extends StatelessWidget {
 
         // زر البحث في المنتصف
         Positioned(
-          bottom: 30, // نصف الزر خارج الشريط
+          bottom: 30,
           child: GestureDetector(
-            onTap: () => onTap(4),
+            onTap: () => onTap(2), // رقم خاص بزر البحث
             child: Container(
               width: 48,
               height: 48,
@@ -53,7 +53,11 @@ class CustomBottomNavBar extends StatelessWidget {
                   )
                 ],
               ),
-              child: Icon(Icons.search, color: Colors.black87, size: 24),
+              child: Icon(
+                Icons.search,
+                color: currentIndex == 2 ? Colors.pink : Colors.black87,
+                size: 24,
+              ),
             ),
           ),
         ),
@@ -70,14 +74,14 @@ class CustomBottomNavBar extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: isSelected ? Colors.black : Colors.grey,
+            color: isSelected ? Colors.pink : Colors.black,
             size: 22,
           ),
           const SizedBox(height: 4),
           Text(
             label,
             style: TextStyle(
-              color: isSelected ? Colors.black : Colors.grey,
+              color: isSelected ? Colors.pink : Colors.black,
               fontSize: 11,
             ),
           ),
@@ -91,7 +95,7 @@ class BottomNavClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     double center = size.width / 2;
-    double curveRadius = 45 ; // نصف ارتفاع الزر + عمق إضافي (24 + 12 = 36)
+    double curveRadius = 45;
 
     final path = Path();
     path.lineTo(center - curveRadius - 25, 0);

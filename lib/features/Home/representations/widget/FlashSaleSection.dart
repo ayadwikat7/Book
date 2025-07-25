@@ -59,11 +59,10 @@ class FlashSaleSection extends StatelessWidget {
   static Widget flashBookItem(BuildContext context, Map<String, dynamic> book) {
     return GestureDetector(
       onTap: () {
-        // الانتقال إلى صفحة تفاصيل الكتاب
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => Bookdetails(book: book),
+            builder: (context) => BookDetailsPage(bookId: book['id']),
           ),
         );
       },
@@ -141,5 +140,6 @@ class FlashSaleSection extends StatelessWidget {
       ),
     );
   }
+
 
 }

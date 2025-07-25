@@ -1,16 +1,16 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import '../../../splach1/Data/color.dart';
 
 class Searchtext extends StatelessWidget {
-  const Searchtext({super.key});
+  final ValueChanged<String> onSearch;
+
+  const Searchtext({super.key, required this.onSearch});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 45,
-      padding: EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(color: Appcolor.BorderSearch),
@@ -20,14 +20,15 @@ class Searchtext extends StatelessWidget {
         children: [
           Expanded(
             child: TextField(
-              decoration: InputDecoration(
+              onChanged: onSearch, // كلما كتب المستخدم شيء يتم استدعاء onSearch
+              decoration: const InputDecoration(
                 hintText: "Search",
                 border: InputBorder.none,
               ),
             ),
           ),
           Icon(Icons.mic_none, color: Appcolor.BorderSearch),
-          VerticalDivider(
+          const VerticalDivider(
             color: Appcolor.BorderSearch,
             thickness: 1,
             width: 20,

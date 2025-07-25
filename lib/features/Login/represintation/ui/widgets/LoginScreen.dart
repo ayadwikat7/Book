@@ -1,10 +1,11 @@
+import 'dart:convert';
 import 'package:books/features/Login/represintation/ui/widgets/titleAppBar.dart';
 import 'package:books/features/splach1/Data/color.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../Home/representations/widget/BooksH.dart';
-import '../../../../splach1/repesentation/ui/widgets/ButtonHomeScreen.dart';
+import '../../../../createAccount/Data/RegisterService.dart';
+import '../../../../createAccount/Repesentation/ui/widget/PinkLoadingIndicator.dart';
 import '../../../../splach1/repesentation/ui/widgets/Helper.dart';
 import '../../../../createAccount/Repesentation/ui/widget/CreateAccount.dart';
 import '../../../../createAccount/Repesentation/ui/widget/CreateOrLogin.dart';
@@ -21,15 +22,63 @@ class Loginscreen extends StatefulWidget {
 
 class _LoginscreenState extends State<Loginscreen> {
   final _formKey = GlobalKey<FormState>();
-
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  bool isLoading = false;
+
+  final AuthService _authService = AuthService();
 
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _login() async {
+    setState(() => isLoading = true);
+    try {
+      final result = await _authService.loginUser(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+
+      setState(() => isLoading = false);
+
+      if (result['statusCode'] == 200) {
+        final message = result['data']['message'] ?? "Login successful";
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+
+        // احفظ التوكن لو احتجته
+        final token = result['data']['token'] ?? "";
+        print("==> Token: $token");
+
+        // التنقل للصفحة الرئيسية
+        NavigationHelper.push(context: context, destination: const Booksh());
+      } else {
+        final errorMsg = result['data']['message'] ?? "Login failed";
+        _showErrorDialog("Error", errorMsg);
+      }
+    } catch (e) {
+      setState(() => isLoading = false);
+      _showErrorDialog("Connection Error", e.toString());
+    }
+  }
+
+  void _showErrorDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -86,39 +135,24 @@ class _LoginscreenState extends State<Loginscreen> {
                     return null;
                   },
                 ),
-                Row(
-                  children: [
-                    Checkbox(value: false, onChanged: (value) {}),
-                    const SizedBox(width: 5),
-                    const Text(
-                      "Remember me",
-                      style: TextStyle(fontSize: 12),
-                    ),
-                    const Spacer(),
-                    TextButton(
-                      onPressed: () {
-                        NavigationHelper.push(context: context, destination: forgetPass());
-                      },
-                      child: const Text(
-                        "Forget your password?",
-                        style: TextStyle(fontSize: 12, color: Appcolor.Pink),
-                      ),
-                    ),
-                  ],
-                ),
+                const SizedBox(height: 16),
+                if (isLoading)
+                  const Center(
+                    child: PinkLoadingIndicator(),
+                  ),
+                const SizedBox(height: 16),
                 Createorlogin(
                   loginOrSignUp: 'Log in',
                   loginOrSignUpWith: 'Or log in with',
                   belowMassege: 'Don’t have an account?',
                   buttonLable: 'Sign up',
                   onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      NavigationHelper.push(context: context, destination: Booksh());
+                    if (_formKey.currentState!.validate() && !isLoading) {
+                      _login();
                     }
-
                   },
                   onLabelPressed: () {
-                    NavigationHelper.push(context: context, destination: Createaccount());
+                    NavigationHelper.push(context: context, destination: const Createaccount());
                   },
                 )
               ],
